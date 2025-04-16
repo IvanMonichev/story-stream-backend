@@ -1,0 +1,132 @@
+name: 🚀 CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CONTAINER_NAME: story-stream-backend
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/story-stream-backend
+
+jobs:
+  lint:
+    name: 🧹 ESLint Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+      - name: 🧱 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+      - name: 📦 Install dependencies
+        run: npm i
+      - name: 🔍 Run ESLint
+        run: npm run lint
+
+  test:
+    name: 🧪 Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+      - name: 🧱 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.x'
+      - name: 📦 Install dependencies
+        run: npm i
+      - name: 🧪 Execute tests
+        run: npm test
+
+  build:
+    name: 🛠️ Build Application
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [ lint, test ]
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+      - name: 🧱 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+      - name: 📦 Install dependencies (CI)
+        run: npm i
+      - name: 🏗️ Run build
+        run: npm run build
+      - name: 📤 Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+  docker:
+    name: 🐳 Build & Push Docker Image
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [ lint, test ]
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🧱 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔐 Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: 📦 Read version from package.json
+        id: get_version
+        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+
+      - name: 🏗️ Build and tag Docker image
+        run: |
+          docker build \
+            -t $IMAGE_NAME:latest \
+            -t $IMAGE_NAME:$VERSION \
+            ./
+
+      - name: 🚀 Push Docker image
+        run: |
+          docker push $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:$VERSION
+
+  deploy:
+    name: 🚀 SSH Update Service
+    runs-on: ubuntu-latest
+    needs: [ docker ]
+    if: github.ref == 'refs/heads/main'
+    env:
+      VERSION: unknown
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/story-stream-backend
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🧾 Read version from package.json
+        id: pkg
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: 🔐 Add remote SSH host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan music-demo.ru >> ~/.ssh/known_hosts
+
+      - name: 🔐 Set up SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 📡 Update docker service via SSH
+        run: |
+          ssh admin@music-demo.ru \
+            "docker compose --file ~/story-stream/story-stream-docker/docker-compose.yml pull && \
+            docker compose --file ~/story-stream/story-stream-docker/docker-compose.yml up --force-recreate --build -d"
