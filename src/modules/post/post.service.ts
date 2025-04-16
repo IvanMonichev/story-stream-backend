@@ -62,7 +62,7 @@ export class PostService {
   async findOne(id: number) {
     return this.postRepository.findOne({
       where: { id },
-      relations: { user: true, comments: true, likes: true },
+      relations: { user: true, comments: { user: true }, likes: { user: true } },
     });
   }
 
@@ -71,7 +71,7 @@ export class PostService {
       order: { createdAt: 'DESC' },
       take: size,
       skip: (page - 1) * size,
-      relations: { user: true, comments: true, likes: true },
+      relations: { user: true, comments: { user: true }, likes: { user: true } },
     });
 
     return {
