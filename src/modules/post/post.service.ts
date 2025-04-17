@@ -6,6 +6,7 @@ import { UserEntity } from '@/modules/user/entities/user.entity';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CommentEntity } from '@/modules/comment/entities/comment.entity';
 
 @Injectable()
 export class PostService {
@@ -14,6 +15,8 @@ export class PostService {
     private readonly postRepository: Repository<PostEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(CommentEntity)
+    private readonly commentRepository: Repository<CommentEntity>,
     @InjectRepository(PostLikeEntity)
     private readonly postLikeRepository: Repository<PostLikeEntity>,
   ) {}
@@ -48,7 +51,7 @@ export class PostService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    const like = await this.postLikeRepository.findOne({ where: { user } });
+    const like = await this.postLikeRepository.findOne({ where: { user, post } });
 
     if (like) {
       await this.postLikeRepository.remove(like);
@@ -97,7 +100,7 @@ export class PostService {
   async delete(id: number, userId: number) {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: { user: true },
+      relations: { user: true, likes: true, comments: true },
     });
 
     if (!post) {
@@ -108,7 +111,10 @@ export class PostService {
       return false;
     }
 
-    await this.postRepository.delete(id);
+    await this.postLikeRepository.remove(post.likes);
+    await this.commentRepository.remove(post.comments);
+    await this.postRepository.remove(post);
+
     return true;
   }
 }
