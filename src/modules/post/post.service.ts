@@ -51,7 +51,7 @@ export class PostService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    const like = await this.postLikeRepository.findOne({ where: { user, post } });
+    const like = await this.postLikeRepository.findOne({ where: { userId, postId } });
 
     if (like) {
       await this.postLikeRepository.remove(like);
