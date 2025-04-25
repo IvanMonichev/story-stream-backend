@@ -12,8 +12,8 @@ export class LoadController {
     summary: 'Симулировать нагрузку на CPU',
     description: 'Грузит CPU синхронным вычислением на 5 секунд',
   })
-  simulateCpuLoad(): string {
-    this.loadService.simulateCpu();
+  async simulateCpuLoad(): Promise<string> {
+    await this.loadService.simulateCpu();
     return 'CPU load completed';
   }
 }
