@@ -1,3 +1,4 @@
+import { LoadModule } from "@/modules/load/load.module";
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from '@/configs/typeorm.config';
@@ -14,6 +15,7 @@ import { AuthModule } from '@/modules/auth/auth.module';
     CommentModule,
     PostModule,
     UserModule,
+    LoadModule
   ],
   providers: [],
 })

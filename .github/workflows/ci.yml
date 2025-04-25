@@ -9,6 +9,7 @@ on:
 env:
   CONTAINER_NAME: story-stream-backend
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/story-stream-backend
+  REMOTE_HOST: 188.225.46.223
 
 jobs:
   lint:
@@ -118,7 +119,7 @@ jobs:
       - name: 🔐 Add remote SSH host to known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan music-demo.ru >> ~/.ssh/known_hosts
+          ssh-keyscan $REMOTE_HOST >> ~/.ssh/known_hosts
 
       - name: 🔐 Set up SSH agent
         uses: webfactory/ssh-agent@v0.9.0
@@ -127,6 +128,6 @@ jobs:
 
       - name: 📡 Update docker service via SSH
         run: |
-          ssh admin@music-demo.ru \
+          ssh admin@$REMOTE_HOST \
             "docker compose --file ~/story-stream/story-stream-docker/docker-compose.yml pull && \
             docker compose --file ~/story-stream/story-stream-docker/docker-compose.yml up --force-recreate --build -d"
