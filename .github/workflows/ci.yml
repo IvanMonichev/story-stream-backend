@@ -100,13 +100,14 @@ jobs:
           docker push $IMAGE_NAME:$VERSION
 
   deploy:
-    name: 🚀 SSH Update Service
+    name: 🚀 Update Kubernetes Deployment
     runs-on: ubuntu-latest
     needs: [ docker ]
     if: github.ref == 'refs/heads/main'
     env:
       VERSION: unknown
       IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/story-stream-backend
+      KUBECONFIG_PATH: ${{ secrets.KUBECONFIG_PATH }}
 
     steps:
       - name: 📥 Checkout code
@@ -128,7 +129,8 @@ jobs:
 
       - name: 📡 Update docker service via SSH
         run: |
-          ssh admin@$REMOTE_HOST \
-            "export KUBECONFIG=/etc/kubernetes/admin.conf && \
-             kubectl rollout restart -n story-stream deployment/backend && \
-             kubectl rollout status -n story-stream deployment/backend"
+          ssh admin@$REMOTE_HOST "
+          export KUBECONFIG=$KUBECONFIG_PATH && \
+          kubectl config get-contexts && \
+          kubectl rollout restart -n story-stream deployment/backend && \
+          kubectl rollout status -n story-stream deployment/backend"
