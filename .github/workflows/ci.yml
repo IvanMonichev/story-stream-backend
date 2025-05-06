@@ -154,4 +154,4 @@ jobs:
 
       - name: 📡 Deploy to Kubernetes
         run: |
-          kubectl set image deployment/backend backend=$IMAGE_NAME:latest -n story-stream
+          kubectl rollout restart deployment backend -n story-stream
