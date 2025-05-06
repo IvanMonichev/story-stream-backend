@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class TelegramService implements OnModuleInit {
-  private bot: TelegramBot;
+  private bot: TelegramBot | null;
   private readonly logger = new Logger(TelegramService.name);
   private subscribers: number[] = [];
 
@@ -25,7 +25,16 @@ export class TelegramService implements OnModuleInit {
       return;
     }
 
-    this.bot = new TelegramBot(token, { polling: true });
+    try {
+      this.bot = new TelegramBot(token, { polling: false });
+
+      const me = await this.bot.getMe();
+      this.logger.log(`Telegram Bot инициализирован: ${me.username}`);
+    } catch (e) {
+      this.logger.error('Невалидный токен или ошибка при инициализации Telegram Bot', e);
+      this.bot = null;
+      return;
+    }
 
     const all = await this.subscriberRepository.find();
     this.subscribers = all.map((sub) => sub.chatId);
@@ -39,9 +48,9 @@ export class TelegramService implements OnModuleInit {
       if (!exists) {
         await this.subscriberRepository.save({ chatId });
         this.subscribers.push(chatId);
-        await this.bot.sendMessage(chatId, 'Вы успешно подписались на уведомления.');
+        await this.bot?.sendMessage(chatId, 'Вы успешно подписались на уведомления.');
       } else {
-        await this.bot.sendMessage(chatId, 'Вы уже подписаны.');
+        await this.bot?.sendMessage(chatId, 'Вы уже подписаны.');
       }
     });
   }
