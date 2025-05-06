@@ -2,6 +2,7 @@ import { CreatePostDto } from '@/modules/post/dto/createPost.dto';
 import { UpdatePostDto } from '@/modules/post/dto/updatePost.dto';
 import { PostEntity } from '@/modules/post/entities/post.entity';
 import { PostLikeEntity } from '@/modules/postLike/entities/postLike.entity';
+import { TelegramService } from '@/modules/telegram/telegram.service';
 import { UserEntity } from '@/modules/user/entities/user.entity';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,6 +20,7 @@ export class PostService {
     private readonly commentRepository: Repository<CommentEntity>,
     @InjectRepository(PostLikeEntity)
     private readonly postLikeRepository: Repository<PostLikeEntity>,
+    private readonly telegramService: TelegramService,
   ) {}
 
   async create(createPostDto: CreatePostDto, userId: number) {
@@ -35,7 +37,11 @@ export class PostService {
       comments: [],
     });
 
-    return this.postRepository.save(newPost);
+    const savedPost = await this.postRepository.save(newPost);
+
+    await this.telegramService.notifyPostCreated(savedPost);
+
+    return savedPost;
   }
 
   async likePost(postId: number, userId: number) {
@@ -95,6 +101,7 @@ export class PostService {
     }
 
     await this.postRepository.update(id, { ...updatePostDto });
+    await this.telegramService.notifyPostUpdated({ id: id, ...updatePostDto } as PostEntity);
   }
 
   async delete(id: number, userId: number) {
@@ -114,6 +121,7 @@ export class PostService {
     await this.postLikeRepository.remove(post.likes);
     await this.commentRepository.remove(post.comments);
     await this.postRepository.remove(post);
+    await this.telegramService.notifyPostDeleted(id);
 
     return true;
   }

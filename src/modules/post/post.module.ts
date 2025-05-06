@@ -1,3 +1,5 @@
+import { TelegramModule } from '@/modules/telegram/telegram.module';
+import { TelegramService } from '@/modules/telegram/telegram.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from '@/modules/post/entities/post.entity';
@@ -8,7 +10,10 @@ import { PostLikeEntity } from '@/modules/postLike/entities/postLike.entity';
 import { CommentEntity } from '@/modules/comment/entities/comment.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CommentEntity, PostEntity, UserEntity, PostLikeEntity])],
+  imports: [
+    TypeOrmModule.forFeature([CommentEntity, PostEntity, UserEntity, PostLikeEntity]),
+    TelegramModule,
+  ],
   providers: [PostService],
   controllers: [PostController],
 })
