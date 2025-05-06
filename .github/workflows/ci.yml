@@ -128,6 +128,9 @@ jobs:
 
       - name: 📡 Update docker service via SSH
         run: |
+#          ssh admin@$REMOTE_HOST \
+#            "docker compose --file ~/story-stream/story-stream-docker/docker-compose.yml pull && \
+#            docker compose --file ~/story-stream/story-stream-docker/docker-compose.yml up --force-recreate --build -d"
           ssh admin@$REMOTE_HOST \
-            "docker compose --file ~/story-stream/story-stream-docker/docker-compose.yml pull && \
-            docker compose --file ~/story-stream/story-stream-docker/docker-compose.yml up --force-recreate --build -d"
+          "kubectl rollout restart -n story-stream deployment/backend && \
+               kubectl rollout status -n story-stream deployment/backend"
