@@ -150,4 +150,4 @@ jobs:
       - name: 📡 Deploy to Kubernetes cluster
         uses: Azure/k8s-deploy@v4.9
         with:
-          images: ${{ IMAGE_NAME }}:latest
+          images: $IMAGE_NAME:latest
