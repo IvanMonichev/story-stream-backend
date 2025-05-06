@@ -141,17 +141,13 @@ jobs:
       IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/story-stream-backend
 
     steps:
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
+      - name: Kubernetes Set Context
+        uses: Azure/k8s-set-context@v3.0
         with:
-          version: 'latest'
+            method: kubeconfig
+            kubeconfig: ${{ secrets.K8S_CONFIG }}
 
-      - name: Set Kubeconfig
-        run: |
-          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > kubeconfig
-          export KUBECONFIG=~/.kube/kubeconfig
-          kubectl cluster-info
-
-      - name: 📡 Deploy to Kubernetes
-        run: |
-          kubectl set image deployment/backend backend=$IMAGE_NAME:latest -n story-stream --v=8
+      - name: 📡 Deploy to Kubernetes cluster
+        uses: Azure/k8s-deploy@v4.9
+        with:
+          images: ${{ IMAGE_NAME }}:latest
