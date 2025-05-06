@@ -142,7 +142,7 @@ jobs:
 
     steps:
       - name: Kubernetes Set Context
-        uses: Azure/k8s-set-context@v3.0
+        uses: Azure/k8s-set-context@v4
         with:
             method: kubeconfig
             kubeconfig: ${{ secrets.K8S_CONFIG }}
