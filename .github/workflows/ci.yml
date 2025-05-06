@@ -148,6 +148,5 @@ jobs:
             kubeconfig: ${{ secrets.KUBECONFIG_DATA }}
 
       - name: 📡 Deploy to Kubernetes cluster
-        uses: azure/k8s-deploy@v4.9
-        with:
-          images: $IMAGE_NAME:latest
+        run: |
+          kubectl set image deployment/backend backend=$IMAGE_NAME:latest --namespace=story-stream
