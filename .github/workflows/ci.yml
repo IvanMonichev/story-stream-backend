@@ -150,3 +150,7 @@ jobs:
       - name: 📡 Deploy to Kubernetes cluster
         run: |
           kubectl set image deployment/backend backend=$IMAGE_NAME:latest --namespace=story-stream
+
+      - name: 🔁 Restart deployment
+        run: |
+          kubectl rollout restart deployment/backend --namespace=story-stream
