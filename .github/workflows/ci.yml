@@ -149,7 +149,7 @@ jobs:
       - name: Set Kubeconfig
         run: |
           echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > kubeconfig
-          export KUBECONFIG=$PWD/kubeconfig
+          export KUBECONFIG=~/.kube/kubeconfig
           kubectl cluster-info
 
       - name: 📡 Deploy to Kubernetes
