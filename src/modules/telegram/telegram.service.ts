@@ -26,7 +26,7 @@ export class TelegramService implements OnModuleInit {
     }
 
     try {
-      this.bot = new TelegramBot(token, { webHook: false });
+      this.bot = new TelegramBot(token, { polling: true });
 
       const me = await this.bot.getMe();
       this.logger.log(`Telegram Bot инициализирован: ${me.username}`);
