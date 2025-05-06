@@ -1,5 +1,4 @@
 import { TelegramModule } from '@/modules/telegram/telegram.module';
-import { TelegramService } from '@/modules/telegram/telegram.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from '@/modules/post/entities/post.entity';
