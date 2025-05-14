@@ -68,8 +68,9 @@ jobs:
           projectBaseDir: .
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_PROJECT_KEY: story-stream-backend
+          SONAR_PROJECT_KEY: itmo-web-devops-2025
           SONAR_ORGANIZATION: itmo-web-devops-2025
+          SONAR_BRANCH: main
 
 
 
