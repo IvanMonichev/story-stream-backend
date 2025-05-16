@@ -126,16 +126,16 @@ describe('PostController', () => {
 
   describe('JwtAuthGuard', () => {
     it('should be applied to protected routes', () => {
-      const guards = Reflect.getMetadata('__guards__', controller.create) || [];
+      const guards = Reflect.getMetadata('__guards__', controller.create) ?? [];
       expect(guards.some((guard) => guard === JwtAuthGuard)).toBeTruthy();
 
-      const likeGuards = Reflect.getMetadata('__guards__', controller.likePost) || [];
+      const likeGuards = Reflect.getMetadata('__guards__', controller.likePost) ?? [];
       expect(likeGuards.some((guard) => guard === JwtAuthGuard)).toBeTruthy();
 
-      const updateGuards = Reflect.getMetadata('__guards__', controller.update) || [];
+      const updateGuards = Reflect.getMetadata('__guards__', controller.update) ?? [];
       expect(updateGuards.some((guard) => guard === JwtAuthGuard)).toBeTruthy();
 
-      const deleteGuards = Reflect.getMetadata('__guards__', controller.delete) || [];
+      const deleteGuards = Reflect.getMetadata('__guards__', controller.delete) ?? [];
       expect(deleteGuards.some((guard) => guard === JwtAuthGuard)).toBeTruthy();
     });
   });
