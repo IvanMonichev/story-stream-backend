@@ -51,7 +51,7 @@ jobs:
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v3
-        
+
       - name: 📦 Install dependencies
         run: npm i
 
