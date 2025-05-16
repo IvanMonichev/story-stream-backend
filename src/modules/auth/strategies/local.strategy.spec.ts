@@ -1,8 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { LocalStrategy } from './local.strategy';
 import { AuthService } from '@/modules/auth/auth.service';
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-local';
 import { BadRequestException } from '@nestjs/common';
 
 describe('LocalStrategy', () => {
