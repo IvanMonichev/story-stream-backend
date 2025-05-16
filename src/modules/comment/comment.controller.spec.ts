@@ -3,41 +3,44 @@ import { CommentController } from './comment.controller';
 import { CommentService } from './comment.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateCommentDto } from './dto/createComment.dto';
-import { CommentEntity } from './entities/comment.entity';
 import { hash } from 'bcrypt';
 
-describe('CommentController', async () => {
+describe('CommentController', () => {
   let controller: CommentController;
   let commentService: CommentService;
 
-  const mockUser = {
-    id: 1,
-    username: 'Test',
-    bio: 'test',
-    password: await hash('password', 10),
-    posts: [],
-    comments: [],
-    likes: [],
-  };
-  const mockRequest = { user: mockUser } as any;
-  const mockComment: CommentEntity = {
-    id: 1,
-    text: 'Test comment',
-    user: mockUser,
-    post: {
-      id: 1,
-      comments: [],
-      likes: [],
-      user: mockUser,
-      body: '',
-      title: '',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: new Date(),
-    },
-  };
+  let mockUser;
+  let mockRequest;
+  let mockComment;
 
   beforeEach(async () => {
+    mockUser = {
+      id: 1,
+      username: 'Test',
+      bio: 'test',
+      password: await hash('password', 10),
+      posts: [],
+      comments: [],
+      likes: [],
+    };
+    mockRequest = { user: mockUser } as any;
+    mockComment = {
+      id: 1,
+      text: 'Test comment',
+      user: mockUser,
+      post: {
+        id: 1,
+        comments: [],
+        likes: [],
+        user: mockUser,
+        body: '',
+        title: '',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: new Date(),
+      },
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CommentController],
       providers: [
