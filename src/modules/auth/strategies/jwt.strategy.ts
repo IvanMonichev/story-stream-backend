@@ -14,10 +14,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(user: any) {
-    if (!user) {
-      throw new HttpException('Токен истек', HttpStatus.UNAUTHORIZED);
+  async validate(payload: any) {
+    if (!payload || typeof payload !== 'object' || !payload.id || !payload.username) {
+      throw new HttpException('Токен истек или недействителен', HttpStatus.UNAUTHORIZED);
     }
-    return { id: user.id, username: user.username };
+    return { id: payload.id, username: payload.username };
   }
 }

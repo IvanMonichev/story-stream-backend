@@ -12,7 +12,7 @@ const AppDataSource = new DataSource({
   entities: [UserEntity, PostEntity, PostLikeEntity, CommentEntity],
 });
 
-async function seed() {
+export async function seed() {
   try {
     await AppDataSource.initialize();
     console.log('Connected to the database');
