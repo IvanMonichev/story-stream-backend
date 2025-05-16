@@ -92,6 +92,10 @@
     "testEnvironment": "node",
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1"
-    }
+    },
+    "reporters": [
+      "default",
+      ["jest-junit", { "outputDirectory": "coverage", "outputName": "jest-report.xml" }]
+    ]
   }
 }
