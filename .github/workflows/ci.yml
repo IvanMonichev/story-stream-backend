@@ -150,23 +150,23 @@ jobs:
             "docker compose --file ~/story-stream/story-stream-docker/docker-compose.yml pull && \
             docker compose --file ~/story-stream/story-stream-docker/docker-compose.yml up --force-recreate --build -d"
 
-  deploy_k8s:
-    name: 🚀 Deploy k8s
-    runs-on: ubuntu-latest
-    needs: [ docker ]
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Kubernetes Set Context
-        uses: azure/k8s-set-context@v4
-        with:
-            method: kubeconfig
-            kubeconfig: ${{ secrets.KUBECONFIG_DATA }}
-
-      - name: 📡 Deploy to Kubernetes cluster
-        run: |
-          kubectl set image deployment/backend backend=$IMAGE_NAME:latest --namespace=story-stream
-
-      - name: 🔁 Restart deployment
-        run: |
-          kubectl rollout restart deployment/backend --namespace=story-stream
+#  deploy_k8s:
+#    name: 🚀 Deploy k8s
+#    runs-on: ubuntu-latest
+#    needs: [ docker ]
+#    if: github.ref == 'refs/heads/main'
+#
+#    steps:
+#      - name: Kubernetes Set Context
+#        uses: azure/k8s-set-context@v4
+#        with:
+#            method: kubeconfig
+#            kubeconfig: ${{ secrets.KUBECONFIG_DATA }}
+#
+#      - name: 📡 Deploy to Kubernetes cluster
+#        run: |
+#          kubectl set image deployment/backend backend=$IMAGE_NAME:latest --namespace=story-stream
+#
+#      - name: 🔁 Restart deployment
+#        run: |
+#          kubectl rollout restart deployment/backend --namespace=story-stream

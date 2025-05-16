@@ -8,7 +8,6 @@ import { PostModule } from '@/modules/post/post.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { UserModule } from '@/modules/user/user.module';
 import { PostEntity } from '@/modules/post/entities/post.entity';
-import { UserEntity } from '@/modules/user/entities/user.entity';
 import { CreateUserDto } from '@/modules/user/dto/createUser.dto';
 import { CreatePostDto } from '@/modules/post/dto/createPost.dto';
 import { UpdatePostDto } from '@/modules/post/dto/updatePost.dto';
@@ -16,7 +15,6 @@ import { UpdatePostDto } from '@/modules/post/dto/updatePost.dto';
 describe('PostController (e2e)', () => {
   let app: INestApplication;
   let postRepository: Repository<PostEntity>;
-  let userRepository: Repository<UserEntity>;
   let authToken: string;
   let userId: number;
   let postId: number;
@@ -27,7 +25,7 @@ describe('PostController (e2e)', () => {
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: ':memory:',
-          entities: [PostEntity, UserEntity],
+          entities: [PostEntity],
           synchronize: true,
         }),
         PostModule,
@@ -44,7 +42,6 @@ describe('PostController (e2e)', () => {
     await app.init();
 
     postRepository = moduleFixture.get('PostEntityRepository');
-    userRepository = moduleFixture.get('UserEntityRepository');
 
     // Create a test user
     const userDto: CreateUserDto = {
