@@ -14,7 +14,7 @@ export class TelegramService implements OnModuleInit {
 
   constructor(
     @InjectRepository(TelegramSubscriberEntity)
-    private subscriberRepository: Repository<TelegramSubscriberEntity>,
+    private readonly subscriberRepository: Repository<TelegramSubscriberEntity>,
   ) {}
 
   async onModuleInit() {
