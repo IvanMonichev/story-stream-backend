@@ -2,7 +2,7 @@ import { genSalt, hash, compare } from 'bcrypt';
 
 export const MIN_LENGTH_PASSWORD = 8;
 
-export const MIN_1_UPPER_LETTER = /^(?=(.*[A-Z]){1})/;
+export const MIN_1_UPPER_LETTER = /^(?=(.*[A-Z]))/;
 export const ONLY_LATIN_CHARACTERS_AND_SPECIAL_SYMBOLS = /^[a-zA-Z0-9!?@#$%^&*()]*$/; // !, ?, @, #, $, %, ^, &, *, (, )
 
 export const MIN_LENGTH_PASSWORD_MESSAGE = 'The password must contain more than 8 characters.';
