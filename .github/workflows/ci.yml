@@ -45,8 +45,9 @@ jobs:
       - name: 🗃️ Save coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
+          name: coverage
           path: coverage/
+
 
   sonar_scan:
     name: 🔎 SonarCloud Scan
@@ -56,32 +57,25 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v3
 
-      - name: � Setup Node.js
-        uses: actions/setup-node@v3
+      - name: ⬇️ Download test coverage
+        uses: actions/download-artifact@v4
         with:
-          node-version: '22.x'
+          name: coverage
+          path: coverage
 
       - name: 📦 Install dependencies
         run: npm i
 
-      - name: 🧪 Run tests with coverage (for Sonar)
-        run: npm run test:cov
-
-      - name: 🔎 SonarQube Scan
+      - name: 🔎 SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.testExecutionReportPaths=coverage/jest-report.xml
-            -Dsonar.coverage.jacoco.xmlReportPaths=coverage/coverage-final.json
-            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
 
       - name: ✅ Check Quality Gate Status
         uses: SonarSource/sonarqube-quality-gate-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
 
   build:
     name: 🛠️ Build Application
