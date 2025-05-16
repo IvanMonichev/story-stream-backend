@@ -50,10 +50,10 @@ jobs:
     needs: [test]
     steps:
       - name: 📦 Install dependencies
-        run: yarn
+        run: npm i
 
       - name: 🧪 Test and coverage
-        run: yarn jest --coverage
+        run: npm run test:cov
 
       - name: 🔎 SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@master
