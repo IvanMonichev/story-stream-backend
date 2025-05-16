@@ -24,7 +24,7 @@ async function bootstrap() {
     secret: process.env.COOKIE_SECRET,
   });
 
-  const port = +(process.env.SERVER_PORT || 8810);
+  const port = +(process.env.SERVER_PORT ?? 8810);
 
   await app.listen(port, '0.0.0.0');
   console.info(`Server started: http://localhost:${port}`);
