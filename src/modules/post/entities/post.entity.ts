@@ -9,9 +9,9 @@ import {
   OneToMany,
   Relation,
 } from 'typeorm';
-import { UserEntity } from '@/modules/user/entities/user.entity';
-import { CommentEntity } from '@/modules/comment/entities/comment.entity';
-import { PostLikeEntity } from '@/modules/postLike/entities/postLike.entity';
+import type { UserEntity } from '@/modules/user/entities/user.entity';
+import type { CommentEntity } from '@/modules/comment/entities/comment.entity';
+import type { PostLikeEntity } from '@/modules/postLike/entities/postLike.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('posts')
@@ -29,7 +29,7 @@ export class PostEntity {
   body: string;
 
   @ApiProperty()
-  @OneToMany(() => PostLikeEntity, (like) => like.post, { lazy: true })
+  @OneToMany('PostLikeEntity', 'post')
   likes: Relation<PostLikeEntity[]>;
 
   @ApiProperty()
@@ -54,11 +54,11 @@ export class PostEntity {
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', default: null, nullable: true })
   deletedAt: Date;
 
-  @ApiProperty({ type: () => UserEntity })
-  @ManyToOne(() => UserEntity, (user) => user.posts)
+  @ApiProperty()
+  @ManyToOne('UserEntity', 'posts')
   user: Relation<UserEntity>;
 
   @ApiProperty()
-  @OneToMany(() => CommentEntity, (comment) => comment.post)
+  @OneToMany('CommentEntity', 'post')
   comments: Relation<CommentEntity[]>;
 }

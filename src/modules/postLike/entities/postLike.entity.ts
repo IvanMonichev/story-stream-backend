@@ -1,5 +1,5 @@
-import { PostEntity } from '@/modules/post/entities/post.entity';
-import { UserEntity } from '@/modules/user/entities/user.entity';
+import type { PostEntity } from '@/modules/post/entities/post.entity';
+import type { UserEntity } from '@/modules/user/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -10,7 +10,7 @@ export class PostLikeEntity {
   id: number;
 
   @ApiProperty()
-  @ManyToOne(() => UserEntity, (user) => user.likes)
+  @ManyToOne('UserEntity', 'likes')
   @JoinColumn({ name: 'user_id' })
   user: Relation<UserEntity>;
 
@@ -18,7 +18,7 @@ export class PostLikeEntity {
   userId: number;
 
   @ApiProperty()
-  @ManyToOne(() => PostEntity, (post) => post.likes)
+  @ManyToOne('PostEntity', 'likes')
   @JoinColumn({ name: 'post_id' })
   post: Relation<PostEntity>;
 

@@ -1,5 +1,5 @@
-import { PostEntity } from '@/modules/post/entities/post.entity';
-import { UserEntity } from '@/modules/user/entities/user.entity';
+import type { PostEntity } from '@/modules/post/entities/post.entity';
+import type { UserEntity } from '@/modules/user/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -13,11 +13,11 @@ export class CommentEntity {
   @Column()
   text: string;
 
-  @ApiProperty({ type: () => UserEntity })
-  @ManyToOne(() => UserEntity, (user) => user.comments)
+  @ApiProperty()
+  @ManyToOne('UserEntity', 'comments')
   user: UserEntity;
 
-  @ApiProperty({ type: () => PostEntity })
-  @ManyToOne(() => PostEntity, (post) => post.comments)
+  @ApiProperty()
+  @ManyToOne('PostEntity', 'comments')
   post: PostEntity;
 }
