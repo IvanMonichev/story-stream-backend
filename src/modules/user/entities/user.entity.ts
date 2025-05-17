@@ -1,5 +1,5 @@
 import { PostEntity } from '@/modules/post/entities/post.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Relation } from 'typeorm';
 import { CommentEntity } from '@/modules/comment/entities/comment.entity';
 import { PostLikeEntity } from '@/modules/postLike/entities/postLike.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -24,13 +24,13 @@ export class UserEntity {
 
   @ApiProperty()
   @OneToMany(() => PostEntity, (post) => post.user)
-  posts: PostEntity[];
+  posts: Relation<PostEntity[]>;
 
   @ApiProperty()
   @OneToMany(() => CommentEntity, (comment) => comment.user)
-  comments: CommentEntity[];
+  comments: Relation<CommentEntity[]>;
 
   @ApiProperty()
   @OneToMany(() => PostLikeEntity, (like) => like.user)
-  likes: PostLikeEntity[];
+  likes: Relation<PostLikeEntity[]>;
 }

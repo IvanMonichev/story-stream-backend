@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  Relation,
 } from 'typeorm';
 import { UserEntity } from '@/modules/user/entities/user.entity';
 import { CommentEntity } from '@/modules/comment/entities/comment.entity';
@@ -29,7 +30,7 @@ export class PostEntity {
 
   @ApiProperty()
   @OneToMany(() => PostLikeEntity, (like) => like.post, { lazy: true })
-  likes: PostLikeEntity[];
+  likes: Relation<PostLikeEntity[]>;
 
   @ApiProperty()
   @CreateDateColumn({
@@ -55,9 +56,9 @@ export class PostEntity {
 
   @ApiProperty({ type: () => UserEntity })
   @ManyToOne(() => UserEntity, (user) => user.posts)
-  user: UserEntity;
+  user: Relation<UserEntity>;
 
   @ApiProperty()
   @OneToMany(() => CommentEntity, (comment) => comment.post)
-  comments: CommentEntity[];
+  comments: Relation<CommentEntity[]>;
 }
