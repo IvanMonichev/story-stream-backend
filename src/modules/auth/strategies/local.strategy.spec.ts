@@ -2,10 +2,12 @@ import { Test } from '@nestjs/testing';
 import { LocalStrategy } from './local.strategy';
 import { AuthService } from '@/modules/auth/auth.service';
 import { BadRequestException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 describe('LocalStrategy', () => {
   let localStrategy: LocalStrategy;
   let authService: jest.Mocked<AuthService>;
+  let configService: jest.Mocked<ConfigService>;
 
   const mockUser = {
     id: 1,
@@ -21,13 +23,21 @@ describe('LocalStrategy', () => {
     const authServiceMock = {
       validateUser: jest.fn(),
     };
+    const configServiceMock = {
+      validateUser: jest.fn(),
+    };
 
     const module = await Test.createTestingModule({
-      providers: [LocalStrategy, { provide: AuthService, useValue: authServiceMock }],
+      providers: [
+        LocalStrategy,
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: ConfigService, useValue: configServiceMock },
+      ],
     }).compile();
 
     localStrategy = module.get<LocalStrategy>(LocalStrategy);
     authService = module.get(AuthService) as jest.Mocked<AuthService>;
+    configService = module.get(ConfigService) as jest.Mocked<ConfigService>;
   });
 
   it('should be defined', () => {
