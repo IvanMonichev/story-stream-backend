@@ -10,11 +10,13 @@ import { LocalStrategy } from '@/modules/auth/strategies/local.strategy';
 import { JwtStrategy } from '@/modules/auth/strategies/jwt.strategy';
 import 'dotenv/config';
 import * as process from 'process';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
     UserModule,
+    ConfigModule,
     PassportModule,
     JwtModule.registerAsync({
       useFactory: () => ({
