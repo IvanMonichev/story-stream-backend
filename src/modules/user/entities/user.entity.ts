@@ -23,14 +23,14 @@ export class UserEntity {
   password: string;
 
   @ApiProperty()
-  @OneToMany('PostEntity', (post: PostEntity) => post.id)
+  @OneToMany('PostEntity', (post: PostEntity) => post.user)
   posts: PostEntity[];
 
   @ApiProperty()
-  @OneToMany('CommentEntity', (comment: CommentEntity) => comment.id)
+  @OneToMany('CommentEntity', (comment: CommentEntity) => comment.user)
   comments: CommentEntity[];
 
   @ApiProperty()
-  @OneToMany('PostLikeEntity', (like: PostLikeEntity) => like.id)
+  @OneToMany('PostLikeEntity', (like: PostLikeEntity) => like.user)
   likes: PostLikeEntity[];
 }

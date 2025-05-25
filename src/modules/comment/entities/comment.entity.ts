@@ -14,10 +14,10 @@ export class CommentEntity {
   text: string;
 
   @ApiProperty()
-  @ManyToOne('UserEntity', (user: UserEntity) => user.id)
+  @ManyToOne('UserEntity', (user: UserEntity) => user.comments)
   user: UserEntity;
 
   @ApiProperty()
-  @ManyToOne('PostEntity', (post: PostEntity) => post.id)
+  @ManyToOne('PostEntity', (post: PostEntity) => post.comments)
   post: PostEntity;
 }

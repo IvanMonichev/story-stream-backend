@@ -54,10 +54,10 @@ export class PostEntity {
   deletedAt: Date;
 
   @ApiProperty()
-  @ManyToOne('UserEntity', (user: UserEntity) => user.id)
+  @ManyToOne('UserEntity', (user: UserEntity) => user.posts)
   user: UserEntity;
 
   @ApiProperty()
-  @OneToMany('CommentEntity', (comment: CommentEntity) => comment.id)
+  @OneToMany('CommentEntity', (comment: CommentEntity) => comment.post)
   comments: CommentEntity[];
 }

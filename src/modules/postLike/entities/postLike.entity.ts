@@ -10,7 +10,7 @@ export class PostLikeEntity {
   id: number;
 
   @ApiProperty()
-  @ManyToOne('UserEntity', (user: UserEntity) => user.id)
+  @ManyToOne('UserEntity', (user: UserEntity) => user.likes)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
@@ -18,7 +18,7 @@ export class PostLikeEntity {
   userId: number;
 
   @ApiProperty()
-  @ManyToOne('PostEntity', (post: PostEntity) => post.id)
+  @ManyToOne('PostEntity', (post: PostEntity) => post.likes)
   @JoinColumn({ name: 'post_id' })
   post: PostEntity;
 
