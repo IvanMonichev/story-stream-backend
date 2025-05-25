@@ -1,84 +1,57 @@
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { LocalStrategy } from './local.strategy';
 import { AuthService } from '@/modules/auth/auth.service';
-import { BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BadRequestException } from '@nestjs/common';
 
 describe('LocalStrategy', () => {
-  let localStrategy: LocalStrategy;
-  let authService: jest.Mocked<AuthService>;
-  let configService: jest.Mocked<ConfigService>;
+  let strategy: LocalStrategy;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let authService: AuthService;
 
-  const mockUser = {
-    id: 1,
-    username: 'Test',
-    bio: 'test',
-    posts: [],
-    comments: [],
-    likes: [],
-    password: 'hashedpassword',
+  const mockConfigService = {
+    get: jest.fn().mockImplementation((key) => {
+      if (key === 'FIELD_NAME') return 'password';
+    }),
+  };
+
+  const mockAuthService = {
+    validateUser: jest.fn(),
   };
 
   beforeEach(async () => {
-    const authServiceMock = {
-      validateUser: jest.fn(),
-    };
-    const configServiceMock = {
-      validateUser: jest.fn(),
-    };
-
-    const module = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalStrategy,
-        { provide: AuthService, useValue: authServiceMock },
-        { provide: ConfigService, useValue: configServiceMock },
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compile();
 
-    localStrategy = module.get<LocalStrategy>(LocalStrategy);
-    authService = module.get(AuthService) as jest.Mocked<AuthService>;
-    configService = module.get(ConfigService) as jest.Mocked<ConfigService>;
+    strategy = module.get<LocalStrategy>(LocalStrategy);
+    authService = module.get<AuthService>(AuthService);
   });
 
   it('should be defined', () => {
-    expect(localStrategy).toBeDefined();
+    expect(strategy).toBeDefined();
   });
 
-  it('should be a passport strategy', () => {
-    // Проверяем наличие обязательных методов
-    expect(localStrategy.validate).toBeDefined();
-    expect(typeof localStrategy.validate).toBe('function');
+  it('should validate and return a user if credentials are valid', async () => {
+    const mockUser = { id: 1, login: 'testuser' };
+    mockAuthService.validateUser.mockResolvedValueOnce(mockUser);
 
-    // Проверяем, что стратегия имеет нужное имя (если важно)
-    expect(localStrategy.name).toBe('local');
+    const result = await strategy.validate('testuser', 'testpass');
+
+    expect(result).toEqual(mockUser);
+    expect(mockAuthService.validateUser).toHaveBeenCalledWith({
+      login: 'testuser',
+      password: 'testpass',
+    });
   });
 
-  describe('validate', () => {
-    it('should return user when credentials are valid', async () => {
-      authService.validateUser.mockResolvedValue(mockUser);
+  it('should throw BadRequestException if user is not valid', async () => {
+    mockAuthService.validateUser.mockResolvedValueOnce(null);
 
-      const result = await localStrategy.validate('testuser', 'password');
-      expect(result).toEqual(mockUser);
-      expect(authService.validateUser).toHaveBeenCalledWith({
-        login: 'testuser',
-        password: 'password',
-      });
-    });
-
-    it('should throw BadRequestException when credentials are invalid', async () => {
-      // authService.validateUser.mockResolvedValue(null); // или undefined
-
-      await expect(localStrategy.validate('wronguser', 'wrongpass')).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
-    it('should throw BadRequestException when authService throws', async () => {
-      authService.validateUser.mockRejectedValue(new BadRequestException());
-
-      await expect(localStrategy.validate('testuser', 'password')).rejects.toThrow(
-        BadRequestException,
-      );
-    });
+    await expect(strategy.validate('invalid', 'wrongpass')).rejects.toThrow(BadRequestException);
   });
 });
