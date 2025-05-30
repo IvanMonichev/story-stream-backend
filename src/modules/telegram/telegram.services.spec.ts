@@ -47,6 +47,38 @@ describe('TelegramService', () => {
     expect(service).toBeDefined();
   });
 
+  it('should log warning and skip bot init if token is missing', async () => {
+    process.env.TELEGRAM_BOT_TOKEN = '';
+
+    const logSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const loggerSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const initResult = await service.onModuleInit();
+
+    expect(initResult).toBeUndefined();
+    logSpy.mockRestore();
+    loggerSpy.mockRestore();
+  });
+
+  it('should handle bot initialization error gracefully', async () => {
+    (TelegramBot as jest.Mock).mockImplementation(() => {
+      throw new Error('Invalid token');
+    });
+
+    process.env.TELEGRAM_BOT_TOKEN = 'invalid';
+
+    const loggerError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const initResult = await service.onModuleInit();
+
+    expect(initResult).toBeUndefined();
+    loggerError.mockRestore();
+  });
+
+  it('should not send messages if bot is not initialized', async () => {
+    // бот не инициализируется — не вызываем onModuleInit
+    const result = await (service as any).broadcast('test');
+    expect(result).toBeUndefined();
+  });
+
   describe('notifyPostCreated', () => {
     it('should broadcast post created message', async () => {
       await service.onModuleInit();

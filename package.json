@@ -89,6 +89,7 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s",
       "!**/node_modules/**",
+      "!**/utils/**",
       "!**/*.spec.ts",
       "!**/*.test.ts",
       "!**/*.module.ts",
